@@ -53,3 +53,5 @@
 {"level":"\u001b[31merror\u001b[39m","message":"Some internal error","service":"identity-service","timestamp":"2025-01-28T17:01:05.995Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/api/auth/register\",\"status\":\"500\",\"responseTime\":\"14.646\"}","service":"identity-service","timestamp":"2025-01-28T17:01:05.998Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T17:01:32.597Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T17:32:33.467Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T17:32:34.517Z"}
