@@ -3,3 +3,53 @@
 {"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T14:43:03.106Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T14:43:05.450Z"}
 {"level":"\u001b[32minfo\u001b[39m","message":"","service":"identity-service","timestamp":"2025-01-28T14:43:24.268Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T14:48:57.231Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T14:48:58.527Z"}
+{"code":"ECONNREFUSED","hostname":"_mongodb._tcp.cluster0.h4ntemz.mongodb.net","level":"\u001b[31merror\u001b[39m","message":"MongoDb error querySrv ECONNREFUSED _mongodb._tcp.cluster0.h4ntemz.mongodb.net","service":"identity-service","stack":"Error: querySrv ECONNREFUSED _mongodb._tcp.cluster0.h4ntemz.mongodb.net\n    at QueryReqWrap.onresolve [as oncomplete] (node:internal/dns/promises:291:17)","syscall":"querySrv","timestamp":"2025-01-28T14:48:58.557Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T16:46:53.666Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T16:46:54.771Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T16:49:41.176Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T16:49:42.152Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T16:52:46.799Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T16:52:47.729Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","timestamp":"2025-01-28T16:53:08.438Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","timestamp":"2025-01-28T16:53:09.283Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","timestamp":"2025-01-28T16:53:12.793Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","timestamp":"2025-01-28T16:53:13.590Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T16:53:14.534Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T16:53:15.344Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Received POST request to /api/register","service":"identity-service","timestamp":"2025-01-28T16:55:49.122Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Received body [object Object]","service":"identity-service","timestamp":"2025-01-28T16:55:49.123Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/api/register\",\"status\":\"404\",\"responseTime\":\"18.581\"}","service":"identity-service","timestamp":"2025-01-28T16:55:49.126Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Received POST request to /api/auth/register","service":"identity-service","timestamp":"2025-01-28T16:57:01.453Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Received body [object Object]","service":"identity-service","timestamp":"2025-01-28T16:57:01.454Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Some internal error","service":"identity-service","timestamp":"2025-01-28T16:57:01.458Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/api/auth/register\",\"status\":\"500\",\"responseTime\":\"7.199\"}","service":"identity-service","timestamp":"2025-01-28T16:57:01.460Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Received POST request to /api/auth/register","service":"identity-service","timestamp":"2025-01-28T16:58:19.464Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Received body [object Object]","service":"identity-service","timestamp":"2025-01-28T16:58:19.464Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Some internal error","service":"identity-service","timestamp":"2025-01-28T16:58:19.465Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/api/auth/register\",\"status\":\"500\",\"responseTime\":\"2.314\"}","service":"identity-service","timestamp":"2025-01-28T16:58:19.466Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Received POST request to /api/auth/register","service":"identity-service","timestamp":"2025-01-28T16:58:55.473Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Received body [object Object]","service":"identity-service","timestamp":"2025-01-28T16:58:55.473Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Some internal error","service":"identity-service","timestamp":"2025-01-28T16:58:55.474Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/api/auth/register\",\"status\":\"500\",\"responseTime\":\"2.062\"}","service":"identity-service","timestamp":"2025-01-28T16:58:55.475Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Received POST request to /api/auth/register","service":"identity-service","timestamp":"2025-01-28T16:59:13.496Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Received body [object Object]","service":"identity-service","timestamp":"2025-01-28T16:59:13.496Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Some internal error","service":"identity-service","timestamp":"2025-01-28T16:59:13.498Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/api/auth/register\",\"status\":\"500\",\"responseTime\":\"2.835\"}","service":"identity-service","timestamp":"2025-01-28T16:59:13.498Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T16:59:30.625Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T16:59:31.511Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Some internal error","service":"identity-service","timestamp":"2025-01-28T16:59:36.661Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/api/auth/register\",\"status\":\"500\",\"responseTime\":\"12.196\"}","service":"identity-service","timestamp":"2025-01-28T16:59:36.664Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T17:00:55.310Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T17:00:56.314Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T17:00:57.606Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T17:00:58.369Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T17:00:59.525Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T17:01:00.713Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T17:01:01.748Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T17:01:04.221Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Register","service":"identity-service","timestamp":"2025-01-28T17:01:05.993Z"}
+{"level":"\u001b[31merror\u001b[39m","message":"Some internal error","service":"identity-service","timestamp":"2025-01-28T17:01:05.995Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/api/auth/register\",\"status\":\"500\",\"responseTime\":\"14.646\"}","service":"identity-service","timestamp":"2025-01-28T17:01:05.998Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"Runnig PORT is 3001","service":"identity-service","timestamp":"2025-01-28T17:01:32.597Z"}

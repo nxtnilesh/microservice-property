@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import RefreshToken from "../models/RefreshToken";
+import RefreshToken from "../models/RefreshToken.js";
 
 const generateTokens = async (userDetails) => {
   const accessToken = jwt.sign(

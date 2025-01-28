@@ -1,4 +1,3 @@
-import { log } from "winston";
 import User from "../models/User.js";
 import logger from "../utils/logger.js";
 import validateRegistration from "../utils/validation.js";
@@ -9,6 +8,7 @@ const registerUser = async (req, res) => {
   try {
     // validate the schema
     const { error } = validateRegistration(req.body);
+    logger.info("Register");
     if (error) {
       logger.error("Validation error", error.details[0].message);
       return res.status(400).json({

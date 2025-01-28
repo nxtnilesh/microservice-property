@@ -4,9 +4,10 @@ import connect from "./db/index.js";
 import dotenv from "dotenv";
 import helment from "helmet";
 import cors from "cors";
+import { RateLimiterMemory } from "rate-limiter-flexible";
 import { rateLimit } from "express-rate-limit";
 import logger from "./utils/logger.js";
-
+import errorHandler from "./middleware/errorHandler.js";
 dotenv.config();
 
 const app = express();
@@ -35,22 +36,62 @@ app.use(cors());
 app.use(express.json());
 
 // Middleware for dedug
-app.use((req, _, next) => {
-  logger.info(`Received ${req.method} request to ${req.url}`);
-  logger.info(`Received body ${req.body}`);
-  next();
-});
+// app.use((req, _, next) => {
+//   logger.info(`Received ${req.method} request to ${req.url}`);
+//   logger.info(`Received body ${req.body}`);
+//   next();
+// });
 
 // Protection from DDoS and brute force attacks
+const rateLimiter = new RateLimiterMemory({
+  points: 6,
+  duration: 1,
+});
+app.use((req, res, next) => {
+  rateLimiter
+    .consume(req.ip)
+    .then(() => {
+      next();
+    })
+    .catch(() => {
+      logger.info(`IP based Rate limit exceeded for IP ${req.ip}`);
+      res.status(429).json({
+        success: false,
+        message: "To many requests",
+      });
+    });
+});
+
+// IP based Rate limiter for sensitive endpoints / routes
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 100,
+  limit: 50,
   standardHeaders: "draft-8",
   legacyHeaders: false,
+  handler: (req, res) => {
+    logger.info(`Rate limit exceeded for IP ${req.ip} for endpoints`);
+    res.status(429).json({
+      success: false,
+      message: "To many requests",
+    });
+  },
 });
-app.use(limiter);
 
-const PORT = process.env.PORT || 4001;
+// Appy limiter to this routes
+app.use("/api/auth/register", limiter);
+
+// Routes
+import authRoute from "./routes/identity-service.js";
+app.use("/api/auth", authRoute);
+
+// ErrorHanlder
+app.use(errorHandler);
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   logger.info(`Runnig PORT is ${PORT}`);
+});
+
+// Unhandled promise rejection
+process.on("unhandledRejection", (reason, promise) => {
+  logger.error(`Unhandled Rejection at ${promise} reason:${reason}`);
 });
