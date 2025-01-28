@@ -1,10 +1,18 @@
 import express from "express";
-
 import logger from "./logger";
 import morgan from "morgan";
+import connect from "./db";
+import dotenv from "dotenv";
+import helment from "helmet";
+import cors from "cors";
+dotenv.config();
+
+const app = express();
+
+// MongoDb connection
+connect();
 
 const morganFormat = ":method :url :status :response-time ms";
-
 app.use(
   morgan(morganFormat, {
     stream: {
@@ -20,3 +28,21 @@ app.use(
     },
   })
 );
+app.use(helment());
+app.use(cors());
+app.use(express.jsop());
+app.use((req, _, next) => {
+  logger.info(`Received ${req.method} request to ${req.url}`);
+  logger.info(`Received body ${req.body}`);
+  next();
+});
+
+// Protection from DDoS and brute force attacks
+import { rateLimit } from 'express-rate-limit'
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, 
+	limit: 100, 
+	standardHeaders: 'draft-8', 
+	legacyHeaders: false, 
+})
+app.use(limiter)
