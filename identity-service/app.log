@@ -1,0 +1,5 @@
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T14:42:54.388Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T14:42:59.835Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T14:43:03.106Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"MongoDb connected","service":"identity-service","timestamp":"2025-01-28T14:43:05.450Z"}
+{"level":"\u001b[32minfo\u001b[39m","message":"","service":"identity-service","timestamp":"2025-01-28T14:43:24.268Z"}

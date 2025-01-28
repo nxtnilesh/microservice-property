@@ -1,10 +1,12 @@
 import express from "express";
-import logger from "./logger";
 import morgan from "morgan";
-import connect from "./db";
+import connect from "./db/index.js";
 import dotenv from "dotenv";
 import helment from "helmet";
 import cors from "cors";
+import { rateLimit } from "express-rate-limit";
+import logger from "./utils/logger.js";
+
 dotenv.config();
 
 const app = express();
@@ -30,7 +32,9 @@ app.use(
 );
 app.use(helment());
 app.use(cors());
-app.use(express.jsop());
+app.use(express.json());
+
+// Middleware for dedug
 app.use((req, _, next) => {
   logger.info(`Received ${req.method} request to ${req.url}`);
   logger.info(`Received body ${req.body}`);
@@ -38,11 +42,15 @@ app.use((req, _, next) => {
 });
 
 // Protection from DDoS and brute force attacks
-import { rateLimit } from 'express-rate-limit'
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, 
-	limit: 100, 
-	standardHeaders: 'draft-8', 
-	legacyHeaders: false, 
-})
-app.use(limiter)
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+});
+app.use(limiter);
+
+const PORT = process.env.PORT || 4001;
+app.listen(PORT, () => {
+  logger.info(`Runnig PORT is ${PORT}`);
+});
