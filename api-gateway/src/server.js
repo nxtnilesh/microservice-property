@@ -5,11 +5,14 @@ import cors from "cors";
 import { rateLimit } from "express-rate-limit";
 dotenv.config();
 import proxy from "express-http-proxy";
+import logger from "./utils/logger.js";
+import errorHandler from "./middleware/errorHandler.js";
 const app = express();
 
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(errorHandler);
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -28,7 +31,7 @@ app.use(limiter);
 
 const proxyOptions = {
   proxyReqPathResolver: (req) => {
-    return req.originalUrl.replace(/^\/v1/, "api");
+    return req.originalUrl.replace(/^\/v1/, "/api");
   },
   proxyErrorHanlder: (err, res, next) => {
     console.log(`Proxy error : ${err.message}`);
@@ -50,9 +53,10 @@ app.use(
       return proxyReqOpts;
     },
     userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
-      console.log(
+      logger.info(
         `Response received from Identity service: ${proxyRes.statusCode}`
       );
+
       return proxyResData;
     },
   })
@@ -60,5 +64,9 @@ app.use(
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("API Gateway");
+  logger.info(`Api-gateway service runnig on PORT ${PORT}`);
+
+  logger.info(
+    `Identity service runnig on PORT ${process.env.IDENTITY_SERVICE_URL}`
+  );
 });

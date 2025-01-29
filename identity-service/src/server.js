@@ -15,23 +15,23 @@ const app = express();
 // MongoDb connection
 connect();
 
-const morganFormat = ":method :url :status :response-time ms";
-app.use(
-  morgan(morganFormat, {
-    stream: {
-      write: (message) => {
-        const logObject = {
-          method: message.split(" ")[0],
-          url: message.split(" ")[1],
-          status: message.split(" ")[2],
-          responseTime: message.split(" ")[3],
-        };
-        logger.info(JSON.stringify(logObject));
-        logger.info(JSON.stringify(message));
-      },
-    },
-  })
-);
+// const morganFormat = ":method :url :status :response-time ms";
+// app.use(
+//   morgan(morganFormat, {
+//     stream: {
+//       write: (message) => {
+//         const logObject = {
+//           method: message.split(" ")[0],
+//           url: message.split(" ")[1],
+//           status: message.split(" ")[2],
+//           responseTime: message.split(" ")[3],
+//         };
+//         logger.info(JSON.stringify(logObject));
+//         logger.info(JSON.stringify(message));
+//       },
+//     },
+//   })
+// );
 app.use(helment());
 app.use(cors());
 app.use(express.json());
@@ -66,7 +66,7 @@ app.use((req, res, next) => {
 // IP based Rate limiter for sensitive endpoints / routes
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 50,
+  limit: 5,
   standardHeaders: "draft-8",
   legacyHeaders: false,
   handler: (req, res) => {
@@ -87,9 +87,10 @@ app.use("/api/auth", authRoute);
 
 // ErrorHanlder
 app.use(errorHandler);
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  logger.info(`Runnig PORT is ${PORT}`);
+  logger.info(`Identity service runnig on PORT ${PORT}`);
 });
 
 // Unhandled promise rejection
