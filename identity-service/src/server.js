@@ -27,6 +27,7 @@ app.use(
           responseTime: message.split(" ")[3],
         };
         logger.info(JSON.stringify(logObject));
+        logger.info(JSON.stringify(message));
       },
     },
   })

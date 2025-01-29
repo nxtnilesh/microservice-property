@@ -6,7 +6,7 @@ const validateRegistration = (data) => {
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
   });
-  return Joi.valid(schema);
+  return schema.validate(data);
 };
 
-export default  validateRegistration;
+export default validateRegistration;
