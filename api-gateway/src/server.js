@@ -70,3 +70,8 @@ app.listen(PORT, () => {
     `Identity service runnig on PORT ${process.env.IDENTITY_SERVICE_URL}`
   );
 });
+
+// Unhandled promise rejection
+process.on("unhandledRejection", (reason, promise) => {
+  logger.error(`Unhandled Rejection at ${promise} reason:${reason}`);
+});
