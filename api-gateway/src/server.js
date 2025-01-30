@@ -71,8 +71,6 @@ app.use(
     ...proxyOptions,
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
       proxyReqOpts.headers["Content-Type"] = "application/json";
-      // console.log(srcReq);
-
       proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
       return proxyReqOpts;
     },
