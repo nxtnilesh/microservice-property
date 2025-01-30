@@ -3,7 +3,6 @@ import logger from "../utils/logger.js";
 import { validateRegistration, validateLogin } from "../utils/validation.js";
 import generateTokens from "../utils/generateToken.js";
 import RefreshToken from "../models/RefreshToken.js";
-import { ref } from "joi";
 
 // User Registration
 const registerUser = async (req, res) => {
@@ -149,4 +148,4 @@ const refreshTokenForUser = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser };
+export { registerUser, loginUser, refreshTokenForUser };

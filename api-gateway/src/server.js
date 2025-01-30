@@ -7,6 +7,7 @@ dotenv.config();
 import proxy from "express-http-proxy";
 import logger from "./utils/logger.js";
 import errorHandler from "./middleware/errorHandler.js";
+import validateToken from "./middleware/authMiddleware.js";
 const app = express();
 
 app.use(helmet());
@@ -65,10 +66,13 @@ app.use(
 // Proxy for post service
 app.use(
   "/v1/posts",
+  validateToken,
   proxy(process.env.POST_SERVICE_URL, {
     ...proxyOptions,
     proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
       proxyReqOpts.headers["Content-Type"] = "application/json";
+      // console.log(srcReq);
+
       proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
       return proxyReqOpts;
     },
