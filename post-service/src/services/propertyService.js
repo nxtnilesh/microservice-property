@@ -1,5 +1,5 @@
 import Property from "../models/Property.js";
-import elasticClient from "../config/elasticsearch.js";
+import client from "../config/elasticsearch.js"; // Use lowercase
 
 export const createProperty = async (propertyData) => {
   try {
@@ -7,10 +7,14 @@ export const createProperty = async (propertyData) => {
     const property = await Property.create(propertyData);
 
     // Index in Elasticsearch
-    await elasticClient.index({
+    await client.index({
       index: "properties",
-      id: property._id.toString(),
-      body: property.toObject(),
+      id: property._id.toString(), // Explicitly set document ID
+      body: {
+        title: property.title,
+        description: property.description,
+        // Add other necessary fields
+      },
     });
 
     return property;
