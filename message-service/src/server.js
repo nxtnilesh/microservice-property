@@ -4,6 +4,7 @@ dotenv.config();
 
 import { consumeMessages, publishMessage } from "./utils/rabbitmq.js";
 import { generateOTP, sendOTPEmail } from "./utils/otpService.js";
+import logger from "../../identity-service/src/utils/logger.js";
 
 const app = express();
 app.use(express.json());
@@ -14,7 +15,7 @@ consumeMessages("otp_request", async ({ email, requestId }) => {
   await sendOTPEmail(email, otp);
   await publishMessage("otp_response", { email, otp, requestId });
 
-  console.log(`[Message Service] OTP sent to ${email}`);
+  logger.info(`[Message Service] OTP sent to ${email}`);
 });
-
-app.listen(5002, () => console.log("[Message Service] Running on port 5002"));
+const PORT = process.env.PORT || 3003;
+app.listen(5002, () => logger.info(`Running on port ${PORT}`));
