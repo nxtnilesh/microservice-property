@@ -83,10 +83,18 @@ app.use("/api/auth/register", limiter);
 
 // Routes
 import authRoute from "./routes/identity-service.js";
+import { storeOTP } from "./utils/verifyOTP.js";
+import { consumeMessages } from "./utils/rabbitmq.js";
 app.use("/api/auth", authRoute);
 
 // ErrorHanlder
 app.use(errorHandler);
+
+// Consume OTP responses from message service
+consumeMessages("otp_response", ({ email, otp, requestId }) => {
+  storeOTP(requestId, otp);
+  console.log(`[Identity Service] OTP received for ${email}: ${otp}`);
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

@@ -1,13 +1,16 @@
-import User from "../models/User.js";
-import logger from "../utils/logger.js";
-import { validateRegistration, validateLogin } from "../utils/validation.js";
-import generateTokens from "../utils/generateToken.js";
 import RefreshToken from "../models/RefreshToken.js";
+import User from "../models/User.js";
+import generateTokens from "../utils/generateToken.js";
+import logger from "../utils/logger.js";
+import { publishMessage } from "../utils/rabbitmq.js";
+import { validateLogin, validateRegistration } from "../utils/validation.js";
+import { verifyOTP } from "../utils/verifyOTP.js";
 
 // User Registration
 const registerUser = async (req, res) => {
   logger.info("Registration endpoint hit...");
   try {
+ 
     //validate the schema
     const { error } = validateRegistration(req.body);
     if (error) {
@@ -130,7 +133,7 @@ const refreshTokenForUser = async (req, res) => {
 
     const { refreshToken: newrefreshToken, accessToken: newaccessToken } =
       await generateTokens();
-      
+
     // delete old token
     await RefreshToken.deleteOne({ _id: saveToken._id });
     res.status(201).json({
@@ -148,4 +151,23 @@ const refreshTokenForUser = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser, refreshTokenForUser };
+export const requestOTP = async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email is required' });
+
+  const requestId = Date.now().toString();
+  await publishMessage('otp_request', { email, requestId });
+
+  return res.json({ message: 'OTP request sent', requestId });
+};
+
+export const verifyOTPRequest = (req, res) => {
+  const { requestId, otp } = req.body;
+  if (verifyOTP(requestId, otp)) {
+    return res.json({ message: 'OTP verified successfully' });
+  }
+  return res.status(400).json({ error: 'Invalid or expired OTP' });
+};
+
+export { loginUser, refreshTokenForUser, registerUser };
+
