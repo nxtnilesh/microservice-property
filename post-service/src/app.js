@@ -1,17 +1,28 @@
 import express from "express";
+import cors from "cors";
 import bodyParser from "body-parser";
-import propertyRoutes from "./routes/propertyRoutes.js";
+import dotenv from "dotenv";
 import connectDB from "./config/mongo.js";
+import propertyRoutes from "./routes/propertyRoute.js";
 
+dotenv.config();
+
+// Initialize Express App
 const app = express();
 
-// Connect to MongoDB
-connectDB();
-
 // Middleware
+app.use(cors());
 app.use(bodyParser.json());
 
-// Routes
-app.use("/api", propertyRoutes);
+// Connect Database
+connectDB();
 
-export default app;
+// Routes
+app.use("/api/properties", propertyRoutes);
+const PORT = process.env.PORT || 5000;
+
+// Start Server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+

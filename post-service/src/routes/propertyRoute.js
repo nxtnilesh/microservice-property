@@ -1,8 +1,9 @@
 import express from "express";
-import { addProperty } from "../controllers/propertyController.js";
+import { postProperty } from "../controllers/propertyController.js";
 
 const router = express.Router();
 
-router.post("/properties", addProperty);
+// Create Property
+router.post("/", postProperty);
 
 export default router;
