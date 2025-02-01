@@ -1,19 +1,20 @@
-import Property from "../models/property.js";
-import { indexProperty } from "./elasticsearchService.js";
+import Property from "../models/Property.js";
+import elasticClient from "../config/elasticsearch.js";
 
-const createProperty = async (propertyData) => {
+export const createProperty = async (propertyData) => {
   try {
-    const property = new Property(propertyData);
-    await property.save();
+    // Save to MongoDB
+    const property = await Property.create(propertyData);
 
     // Index in Elasticsearch
-    await indexProperty(property);
+    await elasticClient.index({
+      index: "properties",
+      id: property._id.toString(),
+      body: property.toObject(),
+    });
 
     return property;
   } catch (error) {
-    console.error("Error creating property:", error);
-    throw new Error("Error creating property");
+    throw new Error(`Error saving property: ${error.message}`);
   }
 };
-
-export { createProperty };

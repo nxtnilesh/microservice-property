@@ -1,12 +1,10 @@
 import { createProperty } from "../services/propertyService.js";
 
-const addProperty = async (req, res) => {
+export const postProperty = async (req, res) => {
   try {
     const property = await createProperty(req.body);
-    res.status(201).json(property);
+    res.status(201).json({ message: "Property Created", property });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
-
-export { addProperty };
