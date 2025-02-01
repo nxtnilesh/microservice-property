@@ -4,170 +4,142 @@ import generateTokens from "../utils/generateToken.js";
 import logger from "../utils/logger.js";
 import { publishMessage } from "../utils/rabbitmq.js";
 import { validateLogin, validateRegistration } from "../utils/validation.js";
-import { verifyOTP } from "../utils/verifyOTP.js";
+import { storeOTP, verifyOTP } from "../utils/verifyOTP.js";
 
-// User Registration
-const registerUser = async (req, res) => {
-  logger.info("Registration endpoint hit...");
+// **User Registration - Request OTP**
+export const registerUser = async (req, res) => {
+  logger.info("Registering user...");
   try {
- 
-    //validate the schema
     const { error } = validateRegistration(req.body);
     if (error) {
-      logger.warn("Validation error", error.details[0].message);
-      return res.status(400).json({
-        success: false,
-        message: error.details[0].message,
-      });
-    }
-    const { email, password, username } = req.body;
-
-    let user = await User.findOne({ $or: [{ email }, { username }] });
-    if (user) {
-      logger.warn("User already exists");
-      return res.status(400).json({
-        success: false,
-        message: "User already exists",
-      });
+      return res.status(400).json({ success: false, message: error.details[0].message });
     }
 
-    user = new User({ username, email, password });
-    await user.save();
-    logger.warn("User saved successfully", user._id);
+    const { email, username, password } = req.body;
+    let userExists = await User.findOne({ $or: [{ email }, { username }] });
 
-    const { accessToken, refreshToken } = await generateTokens(user);
+    if (userExists) {
+      return res.status(400).json({ success: false, message: "User already exists" });
+    }
 
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully!",
-      accessToken,
-      refreshToken,
-    });
+    const requestId = Date.now().toString();
+    await publishMessage("otp_request", { email, requestId });
+    storeOTP(requestId, password, username, email); // Store data until OTP verification
+
+    res.json({ success: true, message: "OTP request sent", requestId });
   } catch (e) {
-    logger.error("Registration error occured", e);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    logger.error("Registration error:", e);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
-// User Login
-const loginUser = async (req, res) => {
-  logger.info("Login endpoint hit...", req.body);
+// **Verify OTP & Create User**
+export const verifyOTPRequest = async (req, res) => {
+  const { requestId, otp } = req.body;
+  const storedData = verifyOTP(requestId, otp);
+
+  if (!storedData) {
+    return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
+  }
+
+  const { email, username, password } = storedData;
+  let user = new User({ username, email, password });
+  await user.save();
+  
+  logger.info(`User registered successfully: ${user._id}`);
+  const { accessToken, refreshToken } = await generateTokens(user);
+
+  res.status(201).json({ success: true, message: "User registered successfully", accessToken, refreshToken });
+};
+
+// **User Login**
+export const loginUser = async (req, res) => {
+  logger.info("User login...");
   try {
     const { error } = validateLogin(req.body);
-    if (error) {
-      logger.warn("Validation error", error.details[0].message);
-      return res.status(400).json({
-        success: false,
-        message: error.details[0].message,
-      });
-    }
+    if (error) return res.status(400).json({ success: false, message: error.details[0].message });
+
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-
-    if (!user) {
-      logger.warn("Invalid user");
-      return res.status(400).json({
-        success: false,
-        message: "Invalid credentials",
-      });
-    }
-
-    // user valid password or not
-    const isValidPassword = await user.comparePassword(password);
-    if (!isValidPassword) {
-      logger.warn("Invalid password");
-      return res.status(400).json({
-        success: false,
-        message: "Invalid password",
-      });
+    if (!user || !(await user.comparePassword(password))) {
+      return res.status(400).json({ success: false, message: "Invalid credentials" });
     }
 
     const { accessToken, refreshToken } = await generateTokens(user);
-
-    res.json({
-      accessToken,
-      refreshToken,
-      userId: user._id,
-    });
-  } catch (error) {
-    logger.error("Login error occured", e);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    res.json({ success: true, accessToken, refreshToken, userId: user._id });
+  } catch (e) {
+    logger.error("Login error:", e);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
-// Refresh token
-const refreshTokenForUser = async (req, res) => {
-  logger.info("RefreshingTokenForUser endpoint hit...");
-  try {
-    const { refreshToken } = req.body;
-    if (!refreshToken) {
-      logger.warn("Invalid access token");
-      res.status(400).json({
-        success: false,
-        message: "Invalid access token",
-      });
-    }
-    const saveToken = await RefreshToken.findOne({ token: refreshToken });
-    if (!saveToken || saveToken.expiresAt > new Date()) {
-      logger.warn("Expired access token");
-      res.status(401).json({
-        success: false,
-        message: "Expired access token",
-      });
-    }
-
-    const user = await User.findOne(saveToken.user);
-    if (!user) {
-      logger.warn("User not found");
-      res.status(401).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    const { refreshToken: newrefreshToken, accessToken: newaccessToken } =
-      await generateTokens();
-
-    // delete old token
-    await RefreshToken.deleteOne({ _id: saveToken._id });
-    res.status(201).json({
-      success: true,
-      message: "New Refresh token ",
-      accessToken: newaccessToken,
-      refreshToken: newrefreshToken,
-    });
-  } catch (error) {
-    logger.error("Refreshing token error occured", e);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-};
-
-export const requestOTP = async (req, res) => {
+// **Forgot Password (Request OTP)**
+export const forgotPassword = async (req, res) => {
   const { email } = req.body;
-  if (!email) return res.status(400).json({ error: 'Email is required' });
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(400).json({ success: false, message: "Email not found" });
+  }
 
   const requestId = Date.now().toString();
-  await publishMessage('otp_request', { email, requestId });
+  await publishMessage("otp_request", { email, requestId });
+  storeOTP(requestId, null, null, email); 
 
-  return res.json({ message: 'OTP request sent', requestId });
+  res.json({ success: true, message: "OTP sent for password reset", requestId });
 };
 
-export const verifyOTPRequest = (req, res) => {
-  const { requestId, otp } = req.body;
-  if (verifyOTP(requestId, otp)) {
-    return res.json({ message: 'OTP verified successfully' });
+// **Reset Password**
+export const resetPassword = async (req, res) => {
+  const { requestId, otp, newPassword } = req.body;
+  const storedData = verifyOTP(requestId, otp);
+
+  if (!storedData) {
+    return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
   }
-  return res.status(400).json({ error: 'Invalid or expired OTP' });
+
+  const user = await User.findOne({ email: storedData.email });
+  if (!user) {
+    return res.status(400).json({ success: false, message: "User not found" });
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  res.json({ success: true, message: "Password reset successfully" });
 };
 
-export { loginUser, refreshTokenForUser, registerUser };
+// **User Update**
+export const updateUser = async (req, res) => {
+  const { userId, username, email } = req.body;
+  const user = await User.findById(userId);
 
+  if (!user) {
+    return res.status(404).json({ success: false, message: "User not found" });
+  }
+
+  if (username) user.username = username;
+  if (email) user.email = email;
+  await user.save();
+
+  res.json({ success: true, message: "User updated successfully" });
+};
+
+// **Refresh Token**
+export const refreshTokenForUser = async (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.status(400).json({ success: false, message: "Invalid access token" });
+
+  const saveToken = await RefreshToken.findOne({ token: refreshToken });
+  if (!saveToken || saveToken.expiresAt < new Date()) {
+    return res.status(401).json({ success: false, message: "Expired access token" });
+  }
+
+  const user = await User.findById(saveToken.user);
+  if (!user) return res.status(401).json({ success: false, message: "User not found" });
+
+  const { refreshToken: newRefreshToken, accessToken: newAccessToken } = await generateTokens(user);
+  await RefreshToken.deleteOne({ _id: saveToken._id });
+
+  res.json({ success: true, accessToken: newAccessToken, refreshToken: newRefreshToken });
+};
