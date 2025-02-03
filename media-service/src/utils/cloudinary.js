@@ -1,5 +1,8 @@
-import { cloudinary } from "cloudinary";
-import logger from "./logger";
+import  {v2 as cloudinary}  from "cloudinary";
+import fs from "fs";
+import dotenv from "dotenv";
+import logger from "./logger.js";
+dotenv.config();
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -37,4 +40,19 @@ const deleteMediaFromCloudinary = async (publicId) => {
   }
 };
 
-export { uploadMediaStream, deleteMediaFromCloudinary };
+const uploadOnCloudinary = async (localFilePath) => {
+  try {
+      if (!localFilePath) return null
+      const response = await cloudinary.uploader.upload(localFilePath, {
+          resource_type: "auto"
+      })
+      console.log("file is uploaded on cloudinary ", response.url);
+      fs.unlinkSync(localFilePath)
+      return response;
+
+  } catch (error) {
+      fs.unlinkSync(localFilePath)
+      return null;
+  }
+}
+export {uploadOnCloudinary,  uploadMediaStream, deleteMediaFromCloudinary };

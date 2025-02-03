@@ -18,4 +18,4 @@ consumeMessages("otp_request", async ({ email, requestId }) => {
   logger.info(`[Message Service] OTP sent to ${email}`);
 });
 const PORT = process.env.PORT || 3003;
-app.listen(5002, () => logger.info(`Running on port ${PORT}`));
+app.listen(PORT, () => logger.info(`Running on port ${PORT}`));

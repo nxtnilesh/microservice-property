@@ -1,22 +1,27 @@
-import logger from "../utils/logger";
-import { uploadMediaStream } from "../utils/cloudinary.js";
+import {  uploadOnCloudinary } from "../utils/cloudinary.js";
+import logger from "../utils/logger.js";
+import fs from "fs";
+// import { uploadMediaStream } from "../utils/cloudinary.js";
 
-// const uploadMedia = async (req, res) => {
-//   logger.info("UploadMedia endpoint hit ..");
-//   try {
-//     if (!req.file) {
-//       logger.info("Please upload file");
-//       return res.status(400).json({
-//         success: false,
-//         message: "Please upload file",
-//       });
-//     }
-//     const { originalName, mimeType, buffer } = req.file;
-//     const userId = req.user.userId;
-//     logger.info(`File detail : ${originalName} starting upload...`);
+const uploadMedia = async (req, res) => {
+  logger.info("UploadMedia endpoint hit ..");
+  try {
+    console.log("Media", req.files);
+    // setTimeout(() => {
+    //   console.log("Time out");
 
-//     const cloudinaryResult = await uploadMediaStream(req.file);
-//     logger.info("Uploaded media url", cloudinaryResult.public_id);
-//   } catch (error) {}
-// };
+    //   for (const file of req.files) {
+    //     fs.unlinkSync(file?.path);
+    //   }
+    // }, 1000);
 
+    const result = await uploadOnCloudinary(req.files[0]);
+    console.log("Result", result);
+
+    return res.json({ upload: "Upload" });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+export { uploadMedia };
